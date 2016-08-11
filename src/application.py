@@ -64,9 +64,33 @@ class ut_fizzBuzz(unittest.TestCase):
         output = fizz_or_buzz(3)
         self.assertEqual(output, 'fizz')
 
+    # Negative value
+    # -> should work as it was a positive
+    def test_fizz_3_negative(self):
+        output = fizz_or_buzz(-6)
+        self.assertEqual(output, 'fizz')
+
+    # Float value
+    # -> should work if it can be divided by 3 / 5
+    def test_fizz_3_float(self):
+        output = fizz_or_buzz(3.0)
+        self.assertEqual(output, 'fizz')
+
     # Integer that can be divided by 5 but not by 3
     def test_fizz_5(self):
         output = fizz_or_buzz(5)
+        self.assertEqual(output, 'buzz')
+
+    # Negative value
+    # -> should work as it was a positive
+    def test_fizz_5_negative(self):
+        output = fizz_or_buzz(-10)
+        self.assertEqual(output, 'buzz')
+
+    # Float value
+    # -> should work if it can be divided by 3 / 5
+    def test_fizz_5_float(self):
+        output = fizz_or_buzz(10.0)
         self.assertEqual(output, 'buzz')
 
     # Integer that can be divided by both 3 and 5
@@ -74,9 +98,27 @@ class ut_fizzBuzz(unittest.TestCase):
         output = fizz_or_buzz(15)
         self.assertEqual(output, 'fizzbuzz')
 
+    # Float value
+    # -> should work if it can be divided by 3 / 5
+    def test_fizz_15_float(self):
+        output = fizz_or_buzz(15.0)
+        self.assertEqual(output, 'fizzbuzz')
+
+    # Negative value
+    # -> should work as it was a positive
+    def test_fizz_15_negative(self):
+        output = fizz_or_buzz(-45)
+        self.assertEqual(output, 'fizzbuzz')
+
     # 0 can be divided by all integers
     def test_fizz_0(self):
         output = fizz_or_buzz(0)
+        self.assertEqual(output, 'fizzbuzz')
+
+    # Float value
+    # -> should work as well (0.0)
+    def test_fizz_0_float(self):
+        output = fizz_or_buzz(0.0)
         self.assertEqual(output, 'fizzbuzz')
 
     # Integer that can't be divided by either
@@ -85,6 +127,36 @@ class ut_fizzBuzz(unittest.TestCase):
     def test_fizz_2(self):
         output = fizz_or_buzz(2)
         self.assertEqual(output, '')
+
+    # Negative value
+    # -> should work as it was a positive
+    def test_fizz_2_negative(self):
+        output = fizz_or_buzz(-2)
+        self.assertEqual(output, '')
+
+    # Float value
+    # -> should work as well (2.19876)
+    def test_fizz_2_float(self):
+        output = fizz_or_buzz(2.19876)
+        self.assertEqual(output, '')
+
+    # NaN - string
+    # -> should raise a TypeError
+    def test_fizz_string(self):
+        output = fizz_or_buzz('string')
+        self.assertRaises(TypeError)
+
+    # NaN - list
+    # -> should raise a TypeError
+    def test_fizz_list(self):
+        output = fizz_or_buzz(['item1', 'item2'])
+        self.assertRaises(TypeError)
+
+    # NaN - dictionary
+    # -> should raise a TypeError
+    def test_fizz_dict(self):
+        output = fizz_or_buzz({'item1': 'value1', 'item2': 'value2'})
+        self.assertRaises(TypeError)
 
 import sys
 if __name__ == '__main__':
