@@ -1,3 +1,4 @@
+# Marton Legeny, 11/08/2016, 17:15
 # Python 2,3 support
 from __future__ import print_function
 from six.moves import input
