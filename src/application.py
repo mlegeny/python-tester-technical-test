@@ -10,6 +10,8 @@ import re
 import requests
 from bs4 import BeautifulSoup
 import unittest
+from unittest.mock import patch, mock_open
+import builtins
 
 def get(a):
     # Performs a http request, returning a string
@@ -157,6 +159,37 @@ class ut_fizzBuzz(unittest.TestCase):
     def test_fizz_dict(self):
         output = fizz_or_buzz({'item1': 'value1', 'item2': 'value2'})
         self.assertRaises(TypeError)
+
+'''
+Unit tests for the mocked functions:
+    - requests.get
+    - builtins.open
+'''
+class mock_testClass(unittest.TestCase):
+    # Mock the get function so that a network connection is not needed to write tests
+    # Mock the open function so that a file won't be opened
+    @unittest.mock.patch('requests.get', side_effect = mock_requestsGet)
+    @unittest.mock.patch('builtins.open', unittest.mock.mock_open())
+
+    # Test that output.txt will not be created on the test rig
+    # Test that a network connection is not required for testing get(a)
+    def test_mockedFunctions(self, mock_get):
+        # Call app_output
+        app_output('param1', 'param2', 'param3','param4')
+        # Check that 'output.txt' does not exist
+        self.assertFalse(os.path.isfile('output.txt'))
+        # Check that the mocked 'open' function was called
+        builtins.open.assert_called_once_with('output.txt', 'a')
+
+        # Call get(a)
+        url = 'a href=http://github.com/'
+        output = get(url)
+
+        # Check outpout
+        self.assertEqual(output, "<{}>".format(url))
+
+        # Check that the mocked 'get' function was called
+        mock_get.assert_called_once_with('a href=http://github.com/')
 
 import sys
 if __name__ == '__main__':
