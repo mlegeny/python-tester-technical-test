@@ -33,14 +33,17 @@ def fizz_or_buzz(number):
     is_three = True if number % 3 == 0 else False
     is_five = True if number % 5 == 0 else False
 
+    # Specify a return value
+    returnText = ''
+
+    # If the number can be divided by three, add 'fizz'
     if is_three:
-        return 'fizz'
-    elif is_five:
-        return 'buzz'
-    elif is_three and is_five:
-        return 'fizzbuzz'
-    else:
-        return ''
+        returnText += 'fizz'
+    # If the number can be divided by five, add 'buzz'
+    if is_five:
+        returnText += 'buzz'
+    # Return text
+    return returnText
 
 def app_output(*args):
     with open('output.txt', 'a') as fd:
