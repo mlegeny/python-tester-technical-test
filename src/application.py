@@ -145,20 +145,32 @@ class ut_fizzBuzz(unittest.TestCase):
     # NaN - string
     # -> should raise a TypeError
     def test_fizz_string(self):
-        output = fizz_or_buzz('string')
-        self.assertRaises(TypeError)
+        self.assertRaises(TypeError, fizz_or_buzz, 'string')
 
     # NaN - list
     # -> should raise a TypeError
     def test_fizz_list(self):
-        output = fizz_or_buzz(['item1', 'item2'])
-        self.assertRaises(TypeError)
+        self.assertRaises(TypeError, fizz_or_buzz, ['item1', 'item2'])
 
     # NaN - dictionary
     # -> should raise a TypeError
     def test_fizz_dict(self):
-        output = fizz_or_buzz({'item1': 'value1', 'item2': 'value2'})
-        self.assertRaises(TypeError)
+        self.assertRaises(TypeError, fizz_or_buzz, {'item1': 'value1', 'item2': 'value2'})
+
+'''
+Mock the requests.get call
+This will be called as a 'side effect' when calling the Mock object
+'''
+def mock_requestsGet(*args):
+    class responseObjectMock:
+        def __init__(self, text):
+            self.text = text
+
+        def text(self):
+            return self.text
+
+    # Return data encapsulated in <>
+    return responseObjectMock("<{}>".format(args[0]))
 
 '''
 Unit tests for the mocked functions:
@@ -166,8 +178,10 @@ Unit tests for the mocked functions:
     - builtins.open
 '''
 class mock_testClass(unittest.TestCase):
-    # Mock the get function so that a network connection is not needed to write tests
-    # Mock the open function so that a file won't be opened
+    """
+    Mock the get function so that a network connection is not needed to write tests
+    Mock the open function so that a file won't be opened
+    """
     @unittest.mock.patch('requests.get', side_effect = mock_requestsGet)
     @unittest.mock.patch('builtins.open', unittest.mock.mock_open())
 
@@ -185,11 +199,39 @@ class mock_testClass(unittest.TestCase):
         url = 'a href=http://github.com/'
         output = get(url)
 
-        # Check outpout
+        # Check output
         self.assertEqual(output, "<{}>".format(url))
 
         # Check that the mocked 'get' function was called
-        mock_get.assert_called_once_with('a href=http://github.com/')
+        mock_get.assert_called_once_with(url)
+
+    '''
+    Unit tests for element_count
+    '''
+    @unittest.mock.patch('requests.get', side_effect = mock_requestsGet)
+    def test_elementCount_nomatch(self, mock_get):
+        '''
+        Input: 'http://a', 'a'
+        Output: 0
+        '''
+        # Invoke element_count
+        url, tag = 'http://a', 'a'
+        count = element_count(url, tag)
+
+        # Check output
+        self.assertEqual(count, 0)
+
+    @unittest.mock.patch('requests.get', side_effect = mock_requestsGet)
+    def test_elementCount_wrong_url(self, mock_get):
+        '''
+        Input: 'a', 'a'
+        Output: Exception (not a URL)
+        '''
+
+        url, tag = 'a', 'a'
+
+        # Invoke element_count & check output
+        self.assertRaises(ValueError, element_count, url, tag)
 
 import sys
 if __name__ == '__main__':
