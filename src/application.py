@@ -18,13 +18,25 @@ def get(a):
     response = requests.get(a)
     return response.text
 
-def element_count(a, b):
-    # element count
-    output = get(a)
+'''
+Get HTML tag count
+Inputs:
+    - url: the URL to get the web page from
+    - tag: the HTML tag to be counted
+Outputs:
+    - The number of occurrences the HTML tags were found
+'''
+def element_count(url, tag):
+    # Raise ValueError exception if the URL provided
+    # does not start with http:// or https://
+    rex = re.compile(r'^(http|https)\:\/\/')
+    if (not rex.match(url)):
+        raise ValueError('This is not a URL!')
 
-    soup = BeautifulSoup(output)
+    output = get(url)
+    soup = BeautifulSoup(output, 'html.parser')
 
-    return len(soup.find_all(b))
+    return len(soup.find_all(tag))
 
 def fizz_or_buzz(number):
     # Return fizz or buzz or fizzbuzz
@@ -47,15 +59,26 @@ def fizz_or_buzz(number):
     # Return text
     return returnText
 
+'''
+Print output to file and to STDOUT
+This function takes exactly four arguments
+'''
 def app_output(*args):
     with open('output.txt', 'a') as fd:
         fd.write('{} = {} = {} = {}\n'.format(*args))
     print('{} = {} = {} = {}\n'.format(*args))
 
-def app(a,b):
-    count = element_count(a,b)
-    FizzBuzz = fizz_or_buzz(count)
-    app_output(a,b,count,FizzBuzz)
+'''
+Main applicaton
+Inputs:
+    - url: the URL to get the webpage from
+    - tag: the HTML tag to be counted
+Outputs: string -> <url> = <tag> = <count> = <output of fizz_or_buzz>
+'''
+def app(url,tag):
+    count = element_count(url,tag)
+    fizzBuzzOutput = fizz_or_buzz(count)
+    app_output(url,tag,count,fizzBuzzOutput)
 
 '''
 Unit tests for fizz_or_buzz
@@ -233,8 +256,9 @@ class mock_testClass(unittest.TestCase):
         # Invoke element_count & check output
         self.assertRaises(ValueError, element_count, url, tag)
 
-import sys
 if __name__ == '__main__':
+    # Catch KeyboardInterrupt
+    try:
         # application will take two args url, html tag type (a, ul, div, ...etc)
         if len(sys.argv) < 3:
             url = input('Url: ')
@@ -243,7 +267,11 @@ if __name__ == '__main__':
             url = sys.argv[1]
             tag = sys.argv[2]
 
-        app(url, tag)
+            app(url, tag)
+    except KeyboardInterrupt as e:
+        print("Caught KeyboardInterrupt")
+    finally:
+        exit(0)
 
 '''
 Code Review
@@ -252,7 +280,6 @@ Code Review
 - sys is imported twice (the second one is on line #54)
 - No comment header for the functions (input parameters, output, what does the function do
 - Input arguments could be parsed (argparse) instead of using positional arguments
-- KeyboardInterrupt (Ctrl-C / SIGINT) is not handled
 
 -> get(a)
    - parameter 'a' do not have a descriptive name
@@ -271,7 +298,7 @@ Code Review
    - the logical construct is wrong: the code will return immediately if 'number' can be divided by 3 or by 5,
      making 'return 'fizzbuzz'' dead code
 -> app_output(*args)
-   - no exception handling (what if the file is write-protected
+   - no exception handling (what if the file is write-protected)
    - output is always appended to the existing file, I'm not sure if this is desired by the application
    - this could be assigned to a variable to avoid code duplication: '{} = {} = {} = {}\n'.format(*args)
 -> app(a,b)
