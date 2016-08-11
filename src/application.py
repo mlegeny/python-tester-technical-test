@@ -9,6 +9,7 @@ import sys
 import re
 import requests
 from bs4 import BeautifulSoup
+import unittest
 
 def get(a):
     # Performs a http request, returning a string
@@ -50,6 +51,37 @@ def app(a,b):
     count = element_count(a,b)
     FizzBuzz = fizz_or_buzz(count)
     app_output(a,b,count,FizzBuzz)
+
+'''
+Unit tests for fizz_or_buzz
+'''
+class ut_fizzBuzz(unittest.TestCase):
+    # Integer that can be divided by 3 but not by 5
+    def test_fizz_3(self):
+        output = fizz_or_buzz(3)
+        self.assertEqual(output, 'fizz')
+
+    # Integer that can be divided by 5 but not by 3
+    def test_fizz_5(self):
+        output = fizz_or_buzz(5)
+        self.assertEqual(output, 'buzz')
+
+    # Integer that can be divided by both 3 and 5
+    def test_fizz_15(self):
+        output = fizz_or_buzz(15)
+        self.assertEqual(output, 'fizzbuzz')
+
+    # 0 can be divided by all integers
+    def test_fizz_0(self):
+        output = fizz_or_buzz(0)
+        self.assertEqual(output, 'fizzbuzz')
+
+    # Integer that can't be divided by either
+    # 3 or 5
+    # -> should return nothing
+    def test_fizz_2(self):
+        output = fizz_or_buzz(2)
+        self.assertEqual(output, '')
 
 import sys
 if __name__ == '__main__':
